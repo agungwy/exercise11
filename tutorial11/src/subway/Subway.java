@@ -1,4 +1,4 @@
-package chapter10;
+package subway;
 
 import java.util.*;
 
@@ -21,29 +21,38 @@ public class Subway
         }
     }
     
+    public List listStation(){
+    	return stations;
+    }
+    
+    public List listConnection(){
+    	return connections;
+    }
+    
+    public Map listNetwork(){
+    	return network;
+    }
+    
     public boolean hasStation(String stationName) {
         return stations.contains(new Station(stationName));
     }
     
-    // Method addConnection is missing
-    // TODO: Create Method addConnection
-    
-    public Connection addConnection(String station1Name, String station2Name, String lineName){
-    	if ((this.hasStation(station1Name)) && (this.hasStation(station2Name))) {
-    		Station station1 = new Station(station1Name);
-    		Station station2 = new Station(station2Name);
-    		Connection connection = new Connection(station1, station2, lineName);
-    		connections.add(connection);
-    		connections.add(new Connection(station2, station1,connection.getLineName()));
-    		addToNetwork(station1, station2);
-    		addToNetwork(station2, station1);
-    		return connection;
-    	}
-    	else {
-    		throw new RuntimeException("Invalid connection!");
-    	}
+    public void addConnection(String station1Name, String station2Name, String lineName) {
+        if ((this.hasStation(station1Name)) && (this.hasStation(station2Name))) {
+            Station station1 = new Station(station1Name);
+            Station station2 = new Station(station2Name);
+            Connection connection = new Connection(station1, station2, lineName);
+            connections.add(connection);
+            connections.add(new Connection(station2, station1, connection.getLineName()));
+            
+            addToNetwork(station1, station2);
+            addToNetwork(station2, station1);
+        }
+        else
+        {
+            throw new RuntimeException("Invalid connection: [" + station1Name + ", " + station2Name + ", " + lineName + "]");
+        }
     }
-
     
     private void addToNetwork(Station station1, Station station2) {
         if (network.keySet().contains(station1)) {

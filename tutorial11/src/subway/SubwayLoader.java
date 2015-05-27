@@ -1,4 +1,4 @@
-package chapter10;
+package subway;
 
 import java.io.File;
 import java.io.*;

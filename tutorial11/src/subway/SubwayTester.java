@@ -1,4 +1,4 @@
-package chapter10;
+package subway;
 
 import java.io.*;
 import java.util.*;
@@ -12,7 +12,7 @@ public class SubwayTester
         }
         try {
             SubwayLoader loader = new SubwayLoader();
-            Subway objectville = loader.loadFromFile(new File("ObjectvilleSubway.txt"));
+            Subway objectville = loader.loadFromFile(new File("C:/Users/agungwy/Documents/College Stuff/Semester 4/Advance Program/workspace/tutorial11/src/subway/ObjectvilleSubway.txt"));
             
             if (!objectville.hasStation(args[0])) {
                 System.err.println(args[0] + " is not a station in Objecville");

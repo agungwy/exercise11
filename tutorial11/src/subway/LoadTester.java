@@ -22,6 +22,9 @@ public class LoadTester
             }
             
             System.out.println("\nTesting connections...");
+            System.out.println("1:"+objectville.hasConnection("DRY Drive", "Head First Theater", "Meyer Line"));
+            System.out.println("2:"+objectville.hasConnection("LSP Lane", "JavaBeans Boulevard", "Booch Line"));
+            System.out.println("3:"+objectville.hasConnection("OOA&D Oval", "Head First Lounge", "Gamma Line"));
             if (objectville.hasConnection("DRY Drive", "Head First Theater", "Meyer Line") &&
                 objectville.hasConnection("LSP Lane", "JavaBeans Boulevard", "Booch Line") &&
                 objectville.hasConnection("OOA&D Oval", "Head First Lounge", "Gamma Line")) {

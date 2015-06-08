@@ -16,7 +16,7 @@ public class loadFromFileTest {
 	public void test() {
 		try {
         	SubwayLoader loader = new SubwayLoader();
-			Subway objectville = loader.loadFromFile(new File("D:/New folder/week13/ObjectvilleSubway.txt"));
+			Subway objectville = loader.loadFromFile(new File("C:/Users/agungwy/Documents/College Stuff/Semester 4/Advance Program/workspace/tutorial11/src/subway/ObjectvilleSubway.txt"));
 			
 			assertNotNull(objectville);
 			

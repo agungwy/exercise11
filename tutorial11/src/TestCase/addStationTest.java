@@ -18,15 +18,14 @@ public class addStationTest {
 	public void test() {
 		try {
 			SubwayLoader loader = new SubwayLoader();
-			Subway objectville = loader.loadFromFile(new File("D:/New folder/week13/ObjectvilleSubway.txt"));
+			Subway objectville = loader.loadFromFile(new File("C:/Users/agungwy/Documents/College Stuff/Semester 4/Advance Program/workspace/tutorial11/src/subway/ObjectvilleSubway.txt"));
 			
 			String newStation = "Manggarai Station";
-			
+			Station station = new Station(newStation);
 			boolean test01 = objectville.hasStation(newStation);
 			assertEquals(test01, false);
 			
 			objectville.addStation(newStation);
-			
 			boolean test02 = objectville.hasStation(newStation);
 			assertEquals(test02, true);
 			

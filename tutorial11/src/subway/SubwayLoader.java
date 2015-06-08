@@ -7,8 +7,10 @@ public class SubwayLoader
 {
     private Subway subway;
     
+    
     public SubwayLoader() {
         this.subway = new Subway();
+       
     }
     
     public Subway loadFromFile(File subwayFile) throws IOException {
@@ -22,16 +24,17 @@ public class SubwayLoader
         return subway;
     }
     
-    private void loadStations(Subway subway, BufferedReader reader) throws IOException {
+    public void loadStations(Subway subway, BufferedReader reader) throws IOException {
         String currentLine;
         currentLine = reader.readLine();
         while (currentLine.length() > 0) {
             subway.addStation(currentLine);
             currentLine = reader.readLine();
         }
+
     }
     
-    private void loadLine(Subway subway, BufferedReader reader, String lineName) throws IOException {
+    public void loadLine(Subway subway, BufferedReader reader, String lineName) throws IOException {
         String station1Name, station2Name;
         station1Name = reader.readLine();
         station2Name = reader.readLine();
@@ -40,5 +43,18 @@ public class SubwayLoader
             station1Name = station2Name;
             station2Name = reader.readLine();
         }
+        
+        
     }
+    
+    public void brokeStation(String station){
+    	subway.removeStation(station);
+    }
+    
+
+    public void brokeLine(String name){
+    	subway.removeLine(name);
+    }
+    
+
 }

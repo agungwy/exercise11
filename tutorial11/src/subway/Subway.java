@@ -1,4 +1,7 @@
+
 package subway;
+
+
 
 import java.util.*;
 
@@ -7,70 +10,77 @@ public class Subway
     private List stations;
     private List connections;
     private Map network;
+   
     
     public Subway() {
         this.stations = new LinkedList();
         this.connections = new LinkedList();
         this.network = new HashMap();
+        
     }
     
     public void addStation(String stationName) {
         if (!this.hasStation(stationName)) {
             Station station = new Station(stationName);
-            stations.add(station);
+            if(station.getStatus()==true)
+            	stations.add(station);
         }
-    }
-    
-    public List listStation(){
-    	return stations;
-    }
-    
-    public List listConnection(){
-    	return connections;
-    }
-    
-    public Map listNetwork(){
-    	return network;
     }
     
     public boolean hasStation(String stationName) {
         return stations.contains(new Station(stationName));
     }
     
-    public void addConnection(String station1Name, String station2Name, String lineName) {
-        if ((this.hasStation(station1Name)) && (this.hasStation(station2Name))) {
-            Station station1 = new Station(station1Name);
-            Station station2 = new Station(station2Name);
-            Connection connection = new Connection(station1, station2, lineName);
-            connections.add(connection);
-            connections.add(new Connection(station2, station1, connection.getLineName()));
-            
-            addToNetwork(station1, station2);
-            addToNetwork(station2, station1);
-        }
-        else
-        {
-            throw new RuntimeException("Invalid connection: [" + station1Name + ", " + station2Name + ", " + lineName + "]");
-        }
-    }
+    public void addConnection(String station1Name,String station2Name,
+			String lineName){
+		if((this.hasStation(station1Name))&& (this.hasStation(station2Name))){
+			Station station1=new Station(station1Name);
+			Station station2=new Station(station2Name);
+			
+			Connection connection=new Connection(station1,station2,lineName);
+			if(connection.getStatus()==true)
+				connections.add(connection);
+				connections.add(new Connection(station2, station1, connection.getLineName()));
+				if(station1.getStatus()==true && station2.getStatus()==true){
+					addToNetwork(station1, station2);
+					addToNetwork(station2, station1);
+				}
+			
+		}else{
+			throw new RuntimeException("Invalid connection!");
+			
+		}
+		
+	}
     
     private void addToNetwork(Station station1, Station station2) {
-        if (network.keySet().contains(station1)) {
-            List connectingStations = (List) network.get(station1);
-            if (!connectingStations.contains(station2)) {
-                connectingStations.add(station2);
-            }
-        } else {
-            List connectingStations = new LinkedList();
-            connectingStations.add(station2);
-            network.put(station1, connectingStations);
-        }
+    	List connectingStations;
+    	if(station1.getStatus()==true && station2.getStatus()==true){
+	        if (network.keySet().contains(station1)) {
+	            connectingStations = (List) network.get(station1);
+	            if (!connectingStations.contains(station2)) {
+	                connectingStations.add(station2);
+	                
+	            }
+	            
+	        } else {
+	            connectingStations = new LinkedList();
+	            connectingStations.add(station2);
+	            network.put(station1, connectingStations);
+	          
+	        }
+    	}
+    	else{
+    		System.out.println("One of the station is broken");
+    	}
+        
     }
     
     public List getDirections(String startStationName, String endStationName) {
         if (!this.hasStation(startStationName) || !this.hasStation(endStationName))
         {
             throw new RuntimeException("Stations entered do not exist on this subway");
+            
         }
         
         Station start = new Station(startStationName);
@@ -79,59 +89,93 @@ public class Subway
         List reachableStations = new LinkedList();
         Map previousStations = new HashMap();
         List neighbors = (List)network.get(start);
-        
-        for (Iterator i = neighbors.iterator(); i.hasNext(); ) {
-            Station station = (Station) i.next();
-            if (station.equals(end)) {
-                route.add(getConnection(start, end));
-                return route;
-            } else {
-                reachableStations.add(station);
-                previousStations.put(station, start);
-            }
+
+        Set<Station> set=network.keySet();
+
+        Station startCheck=getStation(startStationName);
+        if(startCheck.equals(start)){
+        	start.setStatus(startCheck.getStatus());
         }
         
-        List nextStations = new LinkedList();
-        nextStations.addAll(neighbors);
-        Station currentStation = start;
-        
-        searchLoop:
-        for (int i = 1; i < stations.size(); i++) {
-            List tmpNextStations = new LinkedList();
-            for (Iterator j = nextStations.iterator(); j.hasNext(); ) {
-                Station station = (Station) j.next();
-                reachableStations.add(station);
-                currentStation = station;
-                List currentNeighbors = (List) network.get(currentStation);
-                for (Iterator k = currentNeighbors.iterator(); k.hasNext(); ) {
-                    Station neighbor = (Station) k.next();
-                    if (neighbor.equals(end)) {
-                        reachableStations.add(neighbor);
-                        previousStations.put(neighbor, currentStation);
-                        break searchLoop;
-                    } else if (!reachableStations.contains(neighbor)) {
-                        reachableStations.add(neighbor);
-                        tmpNextStations.add(neighbor);
-                        previousStations.put(neighbor, currentStation);
-                    }
-                }
-            }
-            nextStations = tmpNextStations;
-        }
-        
-        //We've found the path now!
-        boolean keepLooping = true;
-        Station keyStation = end;
-        Station station;
-        
-        while (keepLooping) {
-            station = (Station) previousStations.get(keyStation);
-            route.add(0, getConnection(station, keyStation));
-            if (start.equals(station)) {
-                keepLooping = false;
-            }
-            keyStation = station;
-        }
+        if(start.getStatus()==true){
+	        for (Iterator i = neighbors.iterator(); i.hasNext(); ) {
+	            Station station = (Station) i.next();
+	            if(station.getStatus()==true){
+			            if (station.equals(end)) {
+		            	if(getConnection(start,end).getStatus()==true){
+		            		route.add(getConnection(start, end));
+		            		return route;
+		            	}
+		            } else {
+			            	reachableStations.add(station);
+		            		previousStations.put(station, start);
+
+		            	
+		            }
+		        }
+	        }
+	        List nextStations = new LinkedList();
+	        for (Iterator i = neighbors.iterator(); i.hasNext(); ) {
+	            Station station = (Station) i.next();
+	            if(station.getStatus()==true){
+	            	 nextStations.add(station);
+	            }
+	        }
+	       
+	        Station currentStation = start;
+	        
+	        searchLoop:
+	        for (int i = 1; i < stations.size(); i++) {
+	            List tmpNextStations = new LinkedList();
+	            for (Iterator j = nextStations.iterator(); j.hasNext(); ) {
+	            	
+	                Station station = (Station) j.next();
+	                if(station.getStatus()==true ){
+		                reachableStations.add(station);
+		                currentStation = station;
+		                List currentNeighbors = (List) network.get(currentStation);
+		                for (Iterator k = currentNeighbors.iterator(); k.hasNext(); ) {
+		                    Station neighbor = (Station) k.next();
+			                if(neighbor.getStatus()==true){
+			                    if(getConnection(currentStation, neighbor).getStatus()==true){
+				                    if (neighbor.equals(end)) {
+				                        reachableStations.add(neighbor);
+				                        previousStations.put(neighbor, currentStation);
+				                        break searchLoop;
+				                    } else if (!reachableStations.contains(neighbor) ) {
+				                        reachableStations.add(neighbor);
+				                        tmpNextStations.add(neighbor);
+				                        previousStations.put(neighbor, currentStation);
+				                    }
+			                    }
+		                    }
+		                }
+		            }
+		        }
+	            nextStations = tmpNextStations;
+	        }
+	        
+	        //We've found the path now!
+	        boolean keepLooping = true;
+	        Station keyStation = end;
+	        Station station;
+	        
+	        while (keepLooping) {
+	            station = (Station) previousStations.get(keyStation);
+
+	            if(getConnection(station, keyStation)!=null && getConnection(station, keyStation).getStatus()==true){
+	            	route.add(0, getConnection(station, keyStation));
+	            }else{
+	            	keepLooping=false;
+	            }
+	            
+		        if (start.equals(station)) {
+		        	keepLooping = false;
+		        }
+		        keyStation = station;
+	            
+	        }
+	    }
         
         return route;
     }
@@ -141,8 +185,12 @@ public class Subway
             Connection connection = (Connection) i.next();
             Station one = connection.getStation1();
             Station two = connection.getStation2();
-            if ((station1.equals(one)) && station2.equals(two)) {
-                return connection;
+            try{
+            	if ((station1.equals(one)) && station2.equals(two)) {
+            		return connection;
+            	}
+            }catch(Exception e){
+            	
             }
         }
         return null;
@@ -164,5 +212,59 @@ public class Subway
         }
         return false;
     }
+    
+    public void removeStation(String station){
+		for (int i=0; i<stations.size(); i++){
+			
+			if(((Station)stations.get(i)).getName().equals(station)){
+				Station stationR=(Station)stations.get(i);
+				stationR.setStatus(false);
+//				
+				
+				
+				Set<Station> set=network.keySet();
+				
+				for(Station s: set){
+					List tempList=(List)network.get(s);
+					for (int j=0;j<tempList.size();j++){
+						Station stationTemp=(Station)tempList.get(j);
+						if(stationTemp.getName().equals(station)){
+							stationTemp.setStatus(false);
+						}
+							
+					}
+					
+				}
+				List x=(List) network.get(stationR);
+				network.remove(stationR);
+				stationR.setStatus(false);
+				network.put(stationR,x);
+//				System.out.println(((Station)stations.get(i)).getName());
+//				System.out.println(((Station)stations.get(i)).getStatus());
+				
+			}
+			
+			
+		}
+
+		
+	}
+    public void removeLine(String name){
+    	for(int i=0; i<connections.size();i++){
+    		if(((Connection)connections.get(i)).getLineName().equals(name)){
+				Connection conn=(Connection)connections.get(i);
+				conn.setStatus(false);
+			}
+    	}
+    }
+    public Station getStation(String station){
+    	for (int i=0; i<stations.size();i++){
+    		if(((Station)stations.get(i)).getName().equals(station)){
+    			return (Station)stations.get(i);
+    		}
+    	}return null;
+    }
+  
+    
                 
 }
